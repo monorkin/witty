@@ -1,0 +1,10 @@
+[package]
+name = "witty"
+version = "0.1.0"
+authors = ["Stanko Krtalić <stanko.krtalic@gmail.com>"]
+
+[dependencies]
+hyper = "0.10.0"
+serde = "*"
+serde_json = "*"
+serde_derive = "*"
