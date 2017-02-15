@@ -24,8 +24,8 @@ pub enum Method {
 ///
 #[derive(Debug)]
 pub struct HttpError {
-    message: String,
-    status: u16
+    pub message: String,
+    pub status: u16
 }
 
 ///
@@ -78,6 +78,7 @@ fn build_url(path: String, params: Option<Value>) -> String {
 /// Converts the input map into a JSON serialized string of the input map
 ///
 fn build_body(payload: Value) -> String {
+    // TODO
     "".to_string()
 }
 
@@ -85,5 +86,6 @@ fn build_body(payload: Value) -> String {
 /// Converts the raw response string to a map
 ///
 fn deserialize_response(response: Response) -> Value {
+    // TODO
     json!({})
 }
