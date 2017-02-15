@@ -1,6 +1,15 @@
 # Witty
 
-Unofficial wit.ai client library for Rust
+Unofficial wit.ai client library for Rust.
+
+## Disclamer
+
+This is an unofficial client implementation! It comes with no guarantees and
+[Wit.ai](https://wit.ai/) can't be held responsible for any bugs that may occure
+from using this library in your project.
+
+This is a port of [Wit.ai's](https://wit.ai/) official
+[Ruby client](https://github.com/wit-ai/wit-ruby) to Rust
 
 ## Installation
 
@@ -47,3 +56,16 @@ fn main() {
   // ...
 }
 ```
+
+### Errors
+
+The following is a list of errors with their possible status codes and
+explanations.
+
+* _ExeccutionError_
+  * `101` - Max number of steps reached while iterating through actions with the `run_actions` method.
+  * `102` - The API responded with an `error` type response.
+  * `103` - The API didn't specify which action to run.
+  * `104` - The API wanted to run a method that doesn't exist locally.
+  * `105` - The API responded with an unknown type.
+  * `106` - There was a problem connecting to the API.
