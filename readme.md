@@ -13,8 +13,8 @@ This is a port of [Wit.ai's](https://wit.ai/) official
 
 ## Installation
 
-This project is ~not yet available~ on [Crates.io](https://crates.io/), but it can
-be installed via git.
+This project is _not yet available_ on [Crates.io](https://crates.io/), but
+it can be installed via git.
 
 ```Cargo
 [dependencies]
