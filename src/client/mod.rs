@@ -2,18 +2,12 @@ use serde_json::{Value, Map};
 use std::collections::BTreeMap;
 
 ///
-/// Error object that represents errors related to the input actions
-///
-pub struct InvalidActionsError {
-    message: String
-}
-
-///
 /// Handles comunication between the application and Wit.ai
 ///
 pub struct Client {
     token: String,
-    actions: BTreeMap<String, fn(Map<String, Value>, Map<String, Value>)>
+    actions: BTreeMap<String, fn(Value) -> Value>,
+    send_method: fn(Value, Value)
 }
 
 impl Client {
@@ -29,23 +23,14 @@ impl Client {
     ///
     pub fn new(
         token: &str,
-        actions: BTreeMap<String, fn(Map<String, Value>, Map<String, Value>)>
-    ) -> Result<Client, InvalidActionsError> {
-        if !Client::validate_actions(&actions) {
-            return Err(
-                InvalidActionsError {
-                    message: "The given methods are invalid. Please check if
-                        you passed a `send` method."
-                }
-            );
+        actions: BTreeMap<String, fn(Value) -> Value>,
+        send_method: fn(Value, Value)
+    ) -> Client {
+        Client {
+            token: token.to_string(),
+            actions: actions,
+            send_method: send_method
         }
-
-        Ok(
-            Client {
-                token: token.to_string(),
-                actions: actions
-            }
-        )
     }
 
     ///
@@ -58,8 +43,9 @@ impl Client {
     pub fn message(&self, message: &str) ->
         Result<Value, super::http::HttpError>
     {
-        let mut params: Map<String, Value> = Map::new();
-        params.insert("q".to_string(), Value::String(message.to_string()));
+        let params = json!({
+            "q": message.to_string()
+        });
 
         super::http::request(
             self.token.to_owned(),
@@ -84,7 +70,7 @@ impl Client {
         &self, session_id: &str, message: &str, context: Value, reset: bool
     ) -> Result<Value, super::http::HttpError>
     {
-        Ok(Map::new())
+        Ok(json!({}))
     }
 
     ///

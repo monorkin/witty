@@ -34,13 +34,13 @@ pub struct HttpError {
 ///
 pub fn request(
     token: String, method: Method, path: String,
-    params: Option<Map<String, Value>>,
-    payload: Option<Map<String, Value>>
-) -> Result<Map<String, Value>, HttpError>
+    params: Option<Value>, payload: Option<Value>
+
+) -> Result<Value, HttpError>
 {
     let url = &*build_url(path, params);
     let client = Client::new();
-    let body = &*build_body(payload.unwrap_or(Map::new()));
+    let body = &*build_body(payload.unwrap_or(json!({})));
 
     let request = match method {
         Method::Get => client.get(&*url),
@@ -65,7 +65,7 @@ pub fn request(
 ///
 /// Given a path and params it builds a fully qualified URL
 ///
-fn build_url(path: String, params: Option<Map<String, Value>>) -> String {
+fn build_url(path: String, params: Option<Value>) -> String {
     let mut url = API_HOST.to_string();
 
     url.push_str(&path);
@@ -77,13 +77,13 @@ fn build_url(path: String, params: Option<Map<String, Value>>) -> String {
 ///
 /// Converts the input map into a JSON serialized string of the input map
 ///
-fn build_body(payload: Map<String, Value>) -> String {
+fn build_body(payload: Value) -> String {
     "".to_string()
 }
 
 ///
 /// Converts the raw response string to a map
 ///
-fn deserialize_response(response: Response) -> Map<String, Value> {
-    Map::new()
+fn deserialize_response(response: Response) -> Value {
+    json!({})
 }

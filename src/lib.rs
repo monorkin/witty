@@ -4,6 +4,7 @@ extern crate hyper;
 extern crate serde;
 #[macro_use]
 extern crate serde_derive;
+#[macro_use]
 extern crate serde_json;
 
 mod client;
@@ -18,8 +19,9 @@ use std::collections::BTreeMap;
 ///
 pub fn client(
     token: &str,
-    actions: BTreeMap<String, fn(Map<String, Value>, Map<String, Value>)>
-) -> Result<client::Client, client::InvalidActionsError>
+    actions: BTreeMap<String, fn(Value) -> Value>,
+    send_method: fn(Value, Value)
+) -> client::Client
 {
-    client::Client::new(token, actions)
+    client::Client::new(token, actions, send_method)
 }
