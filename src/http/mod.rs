@@ -3,6 +3,7 @@ use serde_json;
 use hyper::client::*;
 use hyper::header::Connection;
 use std::io::Read;
+use serde_urlencoded;
 
 ///
 /// Contains the base URL to access the API
@@ -75,7 +76,15 @@ fn build_url(path: String, params: Option<Value>) -> String {
 
     url.push_str(&path);
 
-    // TODO: Append params
+    let params = match params {
+        Some(json) => json,
+        _ => json!({})
+    };
+    let url_encoded_params = match serde_urlencoded::to_string(&params) {
+        Ok(encoded_params) => encoded_params,
+        Err(error) => "".to_string()
+    };
+    url.push_str(&url_encoded_params);
 
     url
 }
