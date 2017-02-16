@@ -69,3 +69,6 @@ explanations.
   * `104` - The API wanted to run a method that doesn't exist locally.
   * `105` - The API responded with an unknown type.
   * `106` - There was a problem connecting to the API.
+
+* _HttpError_
+  * `100` - Unable to connect to server
