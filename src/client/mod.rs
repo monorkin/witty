@@ -4,6 +4,7 @@ use std::collections::BTreeMap;
 ///
 /// Represents all possbile unexpected states
 ///
+#[derive(Debug)]
 pub struct ExecutionError {
     pub message: String,
     pub code: u32
@@ -12,6 +13,7 @@ pub struct ExecutionError {
 ///
 /// Handles comunication between the application and Wit.ai
 ///
+#[derive(Debug)]
 pub struct Client {
     pub token: String,
     pub actions: BTreeMap<String, fn(Value) -> Value>,
