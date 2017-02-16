@@ -1,5 +1,8 @@
 use serde_json::{Value, Map};
+use serde_json;
 use hyper::client::*;
+use hyper::header::Connection;
+use std::io::Read;
 
 ///
 /// Contains the base URL to access the API
@@ -25,7 +28,8 @@ pub enum Method {
 #[derive(Debug)]
 pub struct HttpError {
     pub message: String,
-    pub status: u16
+    pub status: u16,
+    pub code: u16
 }
 
 ///
@@ -56,7 +60,8 @@ pub fn request(
         Err(_error) => Err(
             HttpError {
                 message: "Could not connect to server".to_string(),
-                status: 0
+                status: 0,
+                code: 100
             }
         )
     }
@@ -70,6 +75,8 @@ fn build_url(path: String, params: Option<Value>) -> String {
 
     url.push_str(&path);
 
+    // TODO: Append params
+
     url
 }
 
@@ -78,14 +85,23 @@ fn build_url(path: String, params: Option<Value>) -> String {
 /// Converts the input map into a JSON serialized string of the input map
 ///
 fn build_body(payload: Value) -> String {
-    // TODO
-    "".to_string()
+    payload.to_string()
 }
 
 ///
 /// Converts the raw response string to a map
 ///
 fn deserialize_response(response: Response) -> Value {
-    // TODO
-    json!({})
+    let mut response = response;
+    let mut body = String::new();
+
+    let bodu = match response.read_to_string(&mut body) {
+        Ok(body) => body,
+        Err(error) => return json!({})
+    };
+
+    match serde_json::from_str(&body[..]) {
+        Ok(body) => body,
+        Err(error) => json!({})
+    }
 }
