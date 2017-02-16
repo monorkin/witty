@@ -95,7 +95,7 @@ fn deserialize_response(response: Response) -> Value {
     let mut response = response;
     let mut body = String::new();
 
-    let bodu = match response.read_to_string(&mut body) {
+    match response.read_to_string(&mut body) {
         Ok(body) => body,
         Err(error) => return json!({})
     };
