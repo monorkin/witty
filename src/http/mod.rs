@@ -1,7 +1,7 @@
-use serde_json::{Value, Map};
+use serde_json::Value;
 use serde_json;
 use hyper::client::*;
-use hyper::header::Connection;
+use hyper::status::StatusCode;
 use std::io::Read;
 use serde_urlencoded;
 
@@ -54,18 +54,38 @@ pub fn request(
 
     let request = request.body(body);
 
-    let response = request.send();
+    // TODO: add bearer and version
 
-    match response {
-        Ok(response) => Ok(deserialize_response(response)),
-        Err(_error) => Err(
+    let response = match request.send() {
+        Ok(response) => response,
+        Err(_error) => {
+            return Err(
+                HttpError {
+                    message: "Could not connect to server".to_string(),
+                    status: 0,
+                    code: 100
+                }
+            )
+        }
+    };
+
+    if response.status != StatusCode::Ok {
+        let reason = format!(
+            "Server responded with error: {}",
+            response.status
+        );
+
+
+        return Err(
             HttpError {
-                message: "Could not connect to server".to_string(),
-                status: 0,
-                code: 100
+                message: reason,
+                status: response.status.to_u16(),
+                code: 101
             }
-        )
-    }
+        );
+    };
+
+    Ok(deserialize_response(response))
 }
 
 ///
@@ -82,7 +102,7 @@ fn build_url(path: String, params: Option<Value>) -> String {
     };
     let url_encoded_params = match serde_urlencoded::to_string(&params) {
         Ok(encoded_params) => encoded_params,
-        Err(error) => "".to_string()
+        Err(_error) => "".to_string()
     };
     url.push_str(&url_encoded_params);
 
@@ -102,15 +122,22 @@ fn build_body(payload: Value) -> String {
 ///
 fn deserialize_response(response: Response) -> Value {
     let mut response = response;
+
+    if response.status != StatusCode::Ok {
+        return json!({});
+    }
+
     let mut body = String::new();
 
     match response.read_to_string(&mut body) {
         Ok(body) => body,
-        Err(error) => return json!({})
+        Err(_error) => return json!({})
     };
+
+    println!("body: {}", &body[..]);
 
     match serde_json::from_str(&body[..]) {
         Ok(body) => body,
-        Err(error) => json!({})
+        Err(_error) => json!({})
     }
 }
