@@ -4,6 +4,8 @@ use hyper::client::*;
 use hyper::status::StatusCode;
 use hyper::header::*;
 use hyper::mime::*;
+use hyper::net::HttpsConnector;
+use hyper_native_tls::NativeTlsClient;
 use std::io::Read;
 use serde_urlencoded;
 
@@ -46,7 +48,9 @@ pub fn request(
 ) -> Result<Value, HttpError>
 {
     let url = &*build_url(path, params);
-    let client = Client::new();
+    let ssl = NativeTlsClient::new().unwrap();
+    let connector = HttpsConnector::new(ssl);
+    let client = Client::with_connector(connector);
     let body = &*build_body(payload.unwrap_or(json!({})));
 
     let request = match method {
@@ -72,10 +76,15 @@ pub fn request(
 
     let response = match request.send() {
         Ok(response) => response,
-        Err(_error) => {
+        Err(error) => {
+            let reason = format!(
+                "Could not connect to server - {}",
+                error
+            );
+
             return Err(
                 HttpError {
-                    message: "Could not connect to server".to_string(),
+                    message: reason,
                     status: 0,
                     code: 100
                 }
@@ -118,6 +127,10 @@ fn build_url(path: String, params: Option<Value>) -> String {
         Ok(encoded_params) => encoded_params,
         Err(_error) => "".to_string()
     };
+
+    if url_encoded_params.len() > 0 {
+        url.push_str("?");
+    }
     url.push_str(&url_encoded_params);
 
     url
@@ -147,8 +160,6 @@ fn deserialize_response(response: Response) -> Value {
         Ok(body) => body,
         Err(_error) => return json!({})
     };
-
-    println!("body: {}", &body[..]);
 
     match serde_json::from_str(&body[..]) {
         Ok(body) => body,

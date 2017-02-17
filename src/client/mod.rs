@@ -128,12 +128,9 @@ impl Client {
         let json = match json_response {
             Ok(json) => json,
             Err(error) => {
-                let reason = format!(
-                    "Could not connect to API. {}",
-                    error.message
-                );
-
-                return Err(ExecutionError { message: reason, code: 106 });
+                return Err(ExecutionError {
+                    message: error.message, code: 106
+                });
             }
         };
 
