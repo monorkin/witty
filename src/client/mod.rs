@@ -1,4 +1,4 @@
-use serde_json::{Value, Map};
+use serde_json::Value;
 use std::collections::BTreeMap;
 
 ///
@@ -110,7 +110,7 @@ impl Client {
     ) -> Result<Value, ExecutionError>
     {
         // Persume a defualt value of 5 if no inpt given
-        let mut steps = max_steps.unwrap_or(5);
+        let steps = max_steps.unwrap_or(5);
 
         // Exit the recursion if the maximum number of steps was exceded
         if steps < 0 {

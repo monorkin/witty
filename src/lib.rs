@@ -2,7 +2,6 @@
 
 extern crate hyper;
 extern crate serde;
-#[macro_use]
 extern crate serde_derive;
 #[macro_use]
 extern crate serde_json;
@@ -11,7 +10,7 @@ extern crate serde_urlencoded;
 mod client;
 mod http;
 
-use serde_json::{Value, Map};
+use serde_json::Value;
 use std::collections::BTreeMap;
 
 ///
