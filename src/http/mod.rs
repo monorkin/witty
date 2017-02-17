@@ -2,6 +2,8 @@ use serde_json::Value;
 use serde_json;
 use hyper::client::*;
 use hyper::status::StatusCode;
+use hyper::header::*;
+use hyper::mime::*;
 use std::io::Read;
 use serde_urlencoded;
 
@@ -54,7 +56,19 @@ pub fn request(
 
     let request = request.body(body);
 
-    // TODO: add bearer and version
+    let mut headers = Headers::new();
+    let authorization_header = format!("Bearer {}", &token[..]);
+    headers.set(Authorization(authorization_header));
+    let accept_header = format!("application/vnd.wit.{}+json", API_VERSION);
+    let accept_header =
+        Header::parse_header(&[accept_header.as_bytes().to_vec()][..])
+        .unwrap_or(Accept(vec![]));
+    headers.set(accept_header);
+    headers.set(
+        ContentType(Mime(TopLevel::Application, SubLevel::Json, vec![]))
+    );
+
+    let request = request.headers(headers);
 
     let response = match request.send() {
         Ok(response) => response,
