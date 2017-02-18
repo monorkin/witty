@@ -13,7 +13,7 @@ This is a port of [Wit.ai's](https://wit.ai/) official
 
 ## Installation
 
-This project is available on [Crates.io](https://crates.io/), and
+This project is available on [Crates.io](https://crates.io/crates/witty), and
 can be installed with `cargo`.
 
 ```Cargo
