@@ -162,3 +162,8 @@ explanations:
 __Note:__ The `HttpError` struct also has an additional `status` field which
 contains the response's HTTP status code. This code will also be displayed in
 the message alongside with the canonical explanation.
+
+# License
+
+This project is licensed under the [MIT license](LICENSE.txt). It's in no way
+affiliated with [Wit.ai](https://wit.ai/).
