@@ -1,6 +1,6 @@
 # Witty
 
-Unofficial wit.ai client library for Rust.
+Unofficial [wit.ai](https://wit.ai/) client library for Rust.
 
 ## Disclamer
 
