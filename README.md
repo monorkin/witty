@@ -13,12 +13,12 @@ This is a port of [Wit.ai's](https://wit.ai/) official
 
 ## Installation
 
-This project is _not yet available_ on [Crates.io](https://crates.io/), but
-it can be installed via git.
+This project is available on [Crates.io](https://crates.io/), and
+can be installed with `cargo`.
 
 ```Cargo
 [dependencies]
-witty = { git = "git@github.com:Stankec/witty.git" }
+witty = "0.1.0"
 ```
 
 ## Usage
