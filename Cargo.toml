@@ -2,6 +2,16 @@
 name = "witty"
 version = "0.1.0"
 authors = ["Stanko Krtalić Rusendić <stanko.krtalic@gmail.com>"]
+description = "wit.ai client library"
+documentation = "https://github.com/Stankec/witty"
+homepage = "https://github.com/Stankec/witty"
+repository = "https://github.com/Stankec/witty"
+readme = "README.md"
+keywords = ["wit.ai", "wit", "bot", "natural", "language"]
+categories = ["api-bindings", "parsing", "text-processing"]
+license = "MIT"
+license-file = "LICENSE.txt"
+
 
 [dependencies]
 hyper = "0.10.4"
