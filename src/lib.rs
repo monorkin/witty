@@ -8,7 +8,7 @@ extern crate serde_derive;
 extern crate serde_json;
 extern crate serde_urlencoded;
 
-mod client;
+pub mod client;
 mod http;
 
 use serde_json::Value;
