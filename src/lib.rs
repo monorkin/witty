@@ -11,18 +11,12 @@ extern crate serde_urlencoded;
 pub mod client;
 pub mod http;
 
-use serde_json::Value;
-use std::collections::BTreeMap;
+pub use serde_json::Value;
 
 ///
 /// Builds and returns a Witty client struct. Conveniance method.
 /// Reference `witty::Client` for more information.
 ///
-pub fn client(
-    token: &str,
-    actions: BTreeMap<String, fn(Value) -> Value>,
-    send_method: fn(Value, Value)
-) -> client::Client
-{
-    client::Client::new(token, actions, send_method)
+pub fn client(token: &str) -> client::Client {
+    client::Client::new(token)
 }

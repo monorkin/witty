@@ -29,11 +29,7 @@ impl Client {
     /// `https://wit.ai/docs/quickstart`.
     /// The token can be found in your application's settings on wit.ai.
     ///
-    pub fn new(
-        token: &str,
-        actions: BTreeMap<String, fn(Value) -> Value>,
-        send_method: fn(Value, Value)
-    ) -> Client {
+    pub fn new(token: &str) -> Client {
         Client {
             token: token.to_string()
         }
