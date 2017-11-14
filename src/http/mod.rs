@@ -12,12 +12,12 @@ use serde_urlencoded;
 ///
 /// Contains the base URL to access the API
 ///
-const API_HOST: &'static str = "https://api.wit.ai";
+pub const API_HOST: &'static str = "https://api.wit.ai";
 
 ///
 /// Contains the version of the API to use. This is required.
 ///
-const API_VERSION: &'static str = "20160516";
+pub const API_VERSION: &'static str = "20160516";
 
 ///
 /// Describes HTTP access methods

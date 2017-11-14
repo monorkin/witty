@@ -9,7 +9,7 @@ extern crate serde_json;
 extern crate serde_urlencoded;
 
 pub mod client;
-mod http;
+pub mod http;
 
 use serde_json::Value;
 use std::collections::BTreeMap;
