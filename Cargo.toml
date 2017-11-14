@@ -1,6 +1,6 @@
 [package]
 name = "witty"
-version = "0.1.0"
+version = "1.0.0"
 authors = ["Stanko Krtalić Rusendić <stanko.krtalic@gmail.com>"]
 description = "wit.ai client library"
 documentation = "https://github.com/Stankec/witty"
