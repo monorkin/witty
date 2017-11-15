@@ -1,12 +1,13 @@
 use serde_json::Value;
 use serde_json;
-use hyper::client::*;
-use hyper::status::StatusCode;
+use hyper;
+use hyper::{StatusCode, Uri, Request, Method as RequestMethod, Response};
 use hyper::header::*;
-use hyper::mime::*;
-use hyper::net::HttpsConnector;
-use hyper_native_tls::NativeTlsClient;
-use std::io::Read;
+use hyper_rustls::HttpsConnector;
+use tokio_core::reactor;
+use futures;
+use futures::Future;
+use futures::Stream;
 use serde_urlencoded;
 
 ///
@@ -48,33 +49,43 @@ pub fn request(
 ) -> Result<Value, HttpError>
 {
     let url = &*build_url(path, params);
-    let ssl = NativeTlsClient::new().unwrap();
-    let connector = HttpsConnector::new(ssl);
-    let client = Client::with_connector(connector);
-    let body = &*build_body(payload.unwrap_or(json!({})));
 
-    let request = match method {
-        Method::Get => client.get(&*url),
-        Method::Post => client.post(&*url)
+    let mut core = reactor::Core::new().unwrap();
+    let url: Uri = (url).parse().unwrap();
+
+    let config =
+        hyper::Client::configure()
+        .connector(HttpsConnector::new(4, &core.handle()));
+    let client = config.build(&core.handle());
+
+    let body = build_body(payload.unwrap_or(json!({})));
+
+    let request_method = match method {
+        Method::Get => RequestMethod::Get,
+        Method::Post => RequestMethod::Post
     };
 
-    let request = request.body(body);
+    let mut request = Request::new(request_method, url);
+    request.set_body(body);
 
-    let mut headers = Headers::new();
     let authorization_header = format!("Bearer {}", &token[..]);
-    headers.set(Authorization(authorization_header));
-    let accept_header = format!("application/vnd.wit.{}+json", API_VERSION);
+    request.headers_mut().set(Authorization(authorization_header));
+
     let accept_header =
-        Header::parse_header(&[accept_header.as_bytes().to_vec()][..])
+        format!("application/vnd.wit.{}+json", API_VERSION);
+    let accept_header =
+        Header::parse_header(&Raw::from(accept_header.as_bytes()))
         .unwrap_or(Accept(vec![]));
-    headers.set(accept_header);
-    headers.set(
-        ContentType(Mime(TopLevel::Application, SubLevel::Json, vec![]))
+    request.headers_mut().set(accept_header);
+    request.headers_mut().set(
+        ContentType(
+            "application/json".parse::<hyper::mime::Mime>().unwrap()
+        )
     );
 
-    let request = request.headers(headers);
+    let request = client.request(request);
 
-    let response = match request.send() {
+    let response = match core.run(request) {
         Ok(response) => response,
         Err(error) => {
             let reason = format!(
@@ -92,17 +103,17 @@ pub fn request(
         }
     };
 
-    if response.status != StatusCode::Ok {
+    if response.status() != StatusCode::Ok {
         let reason = format!(
             "Server responded with error: {}",
-            response.status
+            response.status()
         );
 
 
         return Err(
             HttpError {
                 message: reason,
-                status: response.status.to_u16(),
+                status: response.status().as_u16(),
                 code: 101
             }
         );
@@ -148,18 +159,31 @@ fn build_body(payload: Value) -> String {
 /// Converts the raw response string to a map
 ///
 fn deserialize_response(response: Response) -> Value {
-    let mut response = response;
-
-    if response.status != StatusCode::Ok {
+    if response.status() != StatusCode::Ok {
         return json!({});
     }
 
     let mut body = String::new();
+    let response =
+        response
+        .body()
+        .fold(Vec::new(), |mut acc, chunk| {
+            acc.extend_from_slice(&*chunk);
+            futures::future::ok::<_, hyper::Error>(acc)
+        })
+        .map(|body_bytes| {
+            let string = match String::from_utf8(body_bytes) {
+                Ok(body) => body,
+                Err(_) => "".to_string()
+            };
+            body.push_str(&string[..]);
+        })
+        .poll();
 
-    match response.read_to_string(&mut body) {
-        Ok(body) => body,
-        Err(_error) => return json!({})
-    };
+    match response {
+        Ok(_) => (),
+        Err(_) => return json!({})
+    }
 
     match serde_json::from_str(&body[..]) {
         Ok(body) => body,

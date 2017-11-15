@@ -7,16 +7,17 @@ documentation = "https://github.com/Stankec/witty"
 homepage = "https://github.com/Stankec/witty"
 repository = "https://github.com/Stankec/witty"
 readme = "README.md"
-keywords = ["wit", "bot", "natural", "language"]
+keywords = ["wit", "nlp", "natural", "language"]
 categories = ["api-bindings", "parsing", "text-processing"]
-license = "MIT"
 license-file = "LICENSE.txt"
 
 
 [dependencies]
-hyper = "0.10.4"
-hyper-native-tls = "0.2.2"
-serde = "0.9.7"
-serde_json = "0.9.6"
-serde_derive = "0.9.7"
-serde_urlencoded = "0.4.2"
+futures = "0.1.14"
+hyper = "0.11.6"
+hyper-rustls = "0.11.0"
+tokio-core = "0.1.10"
+serde = "1.0.0"
+serde_json = "1.0.0"
+serde_derive = "1.0.0"
+serde_urlencoded = "0.5.1"
