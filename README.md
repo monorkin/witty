@@ -19,6 +19,9 @@ Wit.ai decided to close down their chat bot / conversation API on
 
 In consequence, this library now only handles communication with Wit.ai servers.
 
+Reference the [change log](CHANGELOG.md) for detailed explanations as to what
+has been done to facilitate the transition.
+
 ## Installation
 
 This project is available on [Crates.io](https://crates.io/crates/witty), and

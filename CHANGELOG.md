@@ -9,7 +9,11 @@ for Rust libraries in
 
 ### Changed
 
+* `witty::Value` is now publicly exposed (no need to import serde_json)
 * `witty::client` now only accepts a single argument - the token
+* Updated `serde` and `serde_json` to version `1.x.x`
+* Updated `hyper` to version `0.11.x`
+* Dropped `hyper-native-tls` in favor of `hyper-rustls`
 
 ### Removed
 
@@ -17,3 +21,4 @@ for Rust libraries in
   2018-01-01
 * `converse` method from `Client` because it will be deprecated by
   2018-01-01
+* `ExeccutionError` codes `101`, `103`, `104` are no longer possible
